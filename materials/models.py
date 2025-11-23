@@ -7,7 +7,7 @@ class Item(models.Model):
     name = models.CharField(max_length=250, verbose_name="Название")
     description = models.TextField(verbose_name="Описание")
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Цена")
-    currency = models.CharField(max_length=3, choices=[("usd", "USD"), ("rub", "RUB")], default="rub")
+    currency = models.CharField(max_length=3, choices=[("usd", "USD"), ("eur", "EUR")], default="usd")
 
     def __str__(self):
         """Метод для вывода товара и его цены."""
@@ -23,7 +23,7 @@ class Discount(models.Model):
     """Модель скидки, можно прикрепить к заказу (в рублях или долларах)."""
     name = models.TextField(verbose_name="Обоснование")
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0,
-                                 verbose_name="Скидка в рублях или долларах")
+                                 verbose_name="Скидка в евро или долларах")
 
     def __str__(self):
         """Метод для вывода скидки."""
@@ -59,21 +59,21 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def subtotal(self):
-        """Метод для расчета суммы всех товаров (в рублях или долларах)."""
+        """Метод для расчета суммы всех товаров (в евро или долларах)."""
         return sum(item.price for item in self.items.all())
 
     def total_discount_amount(self):
-        """Метод для определения суммы всех скидок (в рублях или долларах)."""
+        """Метод для определения суммы всех скидок (в евро или долларах)."""
         # сумма всех скидок, соответствующая валюте товаров
-        currency = self.items.first().currency if self.items.exists() else "rub"
+        currency = self.items.first().currency if self.items.exists() else "usd"
         return sum(discount.amount for discount in self.discounts.all() if discount.currency == currency)
 
     def price_discounted(self):
-        """Метод для определения суммы со скидкой (в рублях или долларах)."""
+        """Метод для определения суммы со скидкой (в евро или долларах)."""
         return self.subtotal() - self.total_discount_amount()
 
     def total_tax_amount(self):
-        """Метод для определения суммы всех налогов (в рублях или долларах)."""
+        """Метод для определения суммы всех налогов (в евро или долларах)."""
         # рассчитываем сумму налога относительно суммы с уже примененной скидкой
         total_tax = 0
         for tax in self.taxes.all():
@@ -81,7 +81,7 @@ class Order(models.Model):
         return total_tax
 
     def total_price(self):
-        """Метод для определения конечной суммы к оплате (в рублях или долларах)."""
+        """Метод для определения конечной суммы к оплате (в евро или долларах)."""
         return int(self.price_discounted()) + self.total_tax_amount()
 
     def __str__(self):
