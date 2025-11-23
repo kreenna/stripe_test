@@ -18,6 +18,7 @@ def item_view(request, id):
 
 class BuyView(View):
     """View для покупки товара при нажатии на Buy."""
+
     def get(self, request, id):
         item = Item.objects.get(id=id)
         order = Order.objects.create()
