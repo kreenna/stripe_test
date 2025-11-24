@@ -35,10 +35,7 @@ COPY --chown=appuser:appuser . .
  
 # устанавливаем переменные окружения для Python
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1 
-
-# устанавливаем права доступа для выполнения действий
-RUN chmod +x  /app/entrypoint.prod.sh
+ENV PYTHONUNBUFFERED=1
  
 # открываем порт
 EXPOSE 8000 
