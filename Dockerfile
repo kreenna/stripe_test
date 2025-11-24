@@ -32,8 +32,6 @@ WORKDIR /app
  
 # копируем код приложения
 COPY --chown=appuser:appuser . .
-
-RUN python manage.py collectstatic --noinput
  
 # устанавливаем переменные окружения для Python
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -43,4 +41,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
  
 # запускаем приложение
-CMD ["sh", "-c", "python manage.py migrate --noinput && python -m gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate --noinput && python -m gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application"]
