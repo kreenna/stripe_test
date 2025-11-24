@@ -55,9 +55,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # настройки базы данных
 load_dotenv()
 DATABASES = {
-    "default": {
+    "default":
         dj_database_url.config(default=os.getenv("DATABASE_URL"))
-    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
