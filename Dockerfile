@@ -37,8 +37,5 @@ COPY --chown=appuser:appuser . .
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
  
-# открываем порт
-EXPOSE 8000 
- 
 # запускаем приложение
-CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate --noinput && python -m gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate --noinput && python -m gunicorn config.asgi:application -k uvicorn.workers.UvicornWorker"]
