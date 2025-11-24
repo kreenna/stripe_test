@@ -44,4 +44,4 @@ RUN chmod +x  /app/entrypoint.prod.sh
 EXPOSE 8000 
  
 # запускаем приложение
-CMD ["/app/entrypoint.prod.sh"]
+CMD ["sh", "-c", "python manage.py collectstatic --noinput && python manage.py migrate --noinput && python -m gunicorn --bind 0.0.0.0:8000 --workers 3 mysite.wsgi:application"]
