@@ -20,7 +20,10 @@ class BuyView(View):
     """View для покупки товара при нажатии на Buy."""
 
     def get(self, request, id):
+        # получаем товар по id
         item = Item.objects.get(id=id)
+
+        # автоматически создаем заказ только с этим товаром (для тестирования)
         order = Order.objects.create()
         order.items.add(item)
         order.save()
