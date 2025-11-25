@@ -35,13 +35,10 @@ COPY --chown=appuser:appuser . .
  
 # устанавливаем переменные окружения для Python
 ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1 
+ENV PYTHONUNBUFFERED=1
 
-# устанавливаем права доступа для выполнения действий
-RUN chmod +x  /app/entrypoint.prod.sh
- 
 # открываем порт
-EXPOSE 8000 
+EXPOSE 8000
  
 # запускаем приложение
-CMD ["/app/entrypoint.prod.sh"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py createadmin && python manage.py collectstatic --noinput && python -m gunicorn --bind 0.0.0.0:8000 --workers 3 config.wsgi:application"]

@@ -7,6 +7,8 @@ stripe.api_key = settings.STRIPE_SECRET_KEY  # секретный ключ Strip
 
 
 def create_payment_intent(request, order_id):
+    """Функция для создания Stripe Payment Intent."""
+
     order = Order.objects.get(id=order_id)  # получаем нужный заказ
 
     amount = int(order.total_price() * 100)  # рассчитываем сумму в минимальных единицах

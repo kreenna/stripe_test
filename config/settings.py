@@ -1,15 +1,17 @@
 import os
 from pathlib import Path
 
+import dj_database_url
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
-DEBUG = False
+DEBUG = os.getenv("DEBUG_OPTION", default="False")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhost").split(",")
 
 # установленные приложения
 INSTALLED_APPS = [
@@ -25,6 +27,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -55,14 +58,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # настройки базы данных
 load_dotenv()
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": os.getenv("POSTGRES_DB"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT", default="5432"),
-    }
+    "default":
+        dj_database_url.config(default=os.getenv("DATABASE_URL"))
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -89,7 +86,13 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-STATIC_ROOT =  "/var/www/static/"
+STATIC_ROOT = "/var/www/static/"
+
+if not DEBUG:
+    # для деплоя онлайн
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
