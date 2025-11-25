@@ -10,9 +10,12 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         username = "admin"
         email = "admin@example.com"
+
+        # если админа еще нет, создаем
         if not User.objects.filter(username=username).exists() and not User.objects.filter(is_superuser=True).exists():
             password = "123qwe456rty"
             User.objects.create_superuser(username=username, email=email, password=password)
             self.stdout.write(self.style.SUCCESS(f"Админ '{username}' создан с паролем: {password}"))
-        else:
+
+        else:  # если админ уже есть
             self.stdout.write("Админ уже существует.")
